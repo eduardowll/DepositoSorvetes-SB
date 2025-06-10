@@ -1,0 +1,61 @@
+<div th:fragment="header">
+    <header>
+        <div id="top-header" th:if="${telaPrincipal}">
+            <div class="container">
+                <ul class="header-links pull-left">
+                    <li><a href="#"><i class="fa fa-phone"></i> +021-95-51-84</a></li>
+                    <li><a href="#"><i class="fa fa-envelope-o"></i> email@email.com</a></li>
+                    <li><a href="#"><i class="fa fa-map-marker"></i> 1734 Stonecoal Road</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="header-logo">
+                            <a href="#" class="logo">
+                                <img th:src="@{/images/logo.png}" alt="">
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 clearfix">
+                        <div class="header-ctn">
+
+                            <div class="dropdown" th:if="${telaPrincipal}">
+                            <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                    <i class="fa fa-shopping-cart"></i>
+                                    <span>Seu Carrinho</span>
+                                    <div class="qty" th:text="${session.carrinho != null ? session.carrinho.size() : 0}">0</div>
+                                </a>
+                                <div class="cart-dropdown">
+                                    <div class="cart-list">
+                                        <p class="text-center">Conteúdo do carrinho aqui futuramente</p>
+                                    </div>
+                                    <div class="cart-summary">
+                                        <small th:text="${session.carrinho != null ? session.carrinho.size() + ' item(s) selecionado(s)' : '0 item(s)'}"></small>
+                                        <h5>SUBTOTAL: --</h5>
+                                    </div>
+                                    <div class="cart-btns">
+                                        <a href="#">Ver Carrinho</a>
+                                        <a href="#">Checkout <i class="fa fa-arrow-circle-right"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="menu-toggle">
+                                <a href="#">
+                                    <i class="fa fa-bars"></i>
+                                    <span>Menu</span>
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+</div>
