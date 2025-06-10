@@ -13,7 +13,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,16 +58,21 @@ public class IndexController {
     }
 
     @GetMapping("/cadastro")
-    public String mostrarFormularioCadastro(Model model) {
+    public String cadastro(Model model) {
         model.addAttribute("sorvete", new Sorvete());
         return "cadastro";
     }
 
     @PostMapping("/salvar")
-    public String salvarSorvete(@Valid @ModelAttribute Sorvete sorvete, BindingResult result) {
+    public String salvar(@Valid @ModelAttribute Sorvete sorvete, BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
-            return "cadastro";
+            if (sorvete.getId() != null) {
+                return "editar";
+            } else {
+                return "cadastro";
+            }
         }
+
         List<String> imagens = Arrays.asList(
                 "/images/img.png",
                 "/images/img1.png",
@@ -77,6 +84,41 @@ public class IndexController {
 
         sorvete.setIsDeleted(null);
         sorveteRepository.save(sorvete);
+
+        if (sorvete.getId() != null) {
+            redirectAttributes.addFlashAttribute("mensagem", "Sorvete cadastrado com sucesso!");
+        } else {
+            redirectAttributes.addFlashAttribute("mensagem", "Sorvete atualizado com sucesso!");
+        }
+
+        return "redirect:/admin";
+    }
+
+    @GetMapping("/editar")
+    public String edicao(@RequestParam("id") Long id, Model model) {
+        Sorvete sorvete = sorveteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Sorvete não encontrado"));
+
+        model.addAttribute("sorvete", sorvete);
+        model.addAttribute("edicao", true); // Flag para indicar que é edição
+        return "editar"; // Retorna a página de edição
+    }
+
+    @GetMapping("/deletar")
+    public String deletarSorvete(@RequestParam("id") Long id, RedirectAttributes redirectAttributes) {
+        Sorvete sorvete = sorveteRepository.findById(id).get();
+        sorvete.setIsDeleted(LocalDate.now());
+        sorveteRepository.save(sorvete);
+        redirectAttributes.addFlashAttribute("mensagem", "Sorvete deletado com sucesso!");
+        return "redirect:/admin";
+    }
+
+    @GetMapping("/restaurar")
+    public String restaurarSorvete(@RequestParam("id") Long id, RedirectAttributes redirectAttributes) {
+        Sorvete sorvete = sorveteRepository.findById(id).get();
+        sorvete.setIsDeleted(null); // Remove a data (volta a null)
+        sorveteRepository.save(sorvete);
+        redirectAttributes.addFlashAttribute("mensagem", "Sorvete restaurado com sucesso!");
         return "redirect:/admin";
     }
 }

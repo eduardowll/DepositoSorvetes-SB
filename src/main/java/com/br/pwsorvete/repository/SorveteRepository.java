@@ -7,6 +7,4 @@ import java.util.List;
 public interface SorveteRepository extends JpaRepository<Sorvete, Long> {
 
     List<Sorvete> findByIsDeletedIsNull();
-
-    List<Sorvete> findByMarca(String marca);
 }

@@ -20,7 +20,7 @@
             <th>Marca</th>
             <th>Preço</th>
             <th>Qtd</th>
-            <th>Deletado?</th>
+            <th>Deletado</th>
             <th>Ações</th>
         </tr>
         </thead>
@@ -32,7 +32,7 @@
             <td th:text="${sorvete.marca}">Marca</td>
             <td th:text="${sorvete.preco}">0.00</td>
             <td th:text="${sorvete.quantidade}">0</td>
-            <td th:text="${sorvete.isDeleted != null ? 'Sim' : 'Não'}">Não</td>
+            <td th:text="${sorvete.isDeleted != null ? sorvete.isDeleted : 'Não'}">Não</td>
             <td class="text-center">
                 <a th:href="@{'/editar?id=' + ${sorvete.id}}" class="btn btn-primary btn-sm">Editar</a>
                 <a th:href="@{'/deletar?id=' + ${sorvete.id}}" class="btn btn-danger btn-sm">Deletar</a>
@@ -42,6 +42,10 @@
         </tbody>
     </table>
 </main>
+<div th:if="${mensagem}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <span th:text="${mensagem}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
 
 <div th:replace="fragments/footer :: footer"></div>
 </body>

@@ -6,15 +6,14 @@
 
 <main class="container mt-5">
     <h2 class="mb-4 text-center">Sorvetes Disponíveis</h2>
-
-    <div class="row" th:each="sorvete : ${sorvetes}">
-        <div class="col-md-4 mb-4">
+    <div class="row">
+        <div class="col-md-4 mb-4" th:each="sorvete : ${sorvetes}">
             <div class="card h-100">
                 <img th:src="@{${sorvete.imageUrl}}" class="card-img-top" alt="Sorvete">
                 <div class="card-body">
                     <h5 class="card-title" th:text="${sorvete.nome}">Nome</h5>
                     <p class="card-text"><strong>Sabor:</strong> <span th:text="${sorvete.sabor}">Sabor</span></p>
-                    <p class="card-text"><strong>Marca:</strong> <span th:text="${sorvete.marca}">Categoria</span></p>
+                    <p class="card-text"><strong>Marca:</strong> <span th:text="${sorvete.marca}">Marca</span></p>
                     <p class="card-text"><strong>Preço:</strong> R$ <span th:text="${sorvete.preco}">0.00</span></p>
                     <a class="btn btn-primary w-100 mt-2" th:href="@{'/adicionarCarrinho?id=' + ${sorvete.id}}">
                         <i class="fa fa-shopping-cart"></i> Adicionar ao Carrinho
@@ -23,6 +22,7 @@
             </div>
         </div>
     </div>
+
 </main>
 
 <div th:replace="fragments/footer :: footer"></div>
