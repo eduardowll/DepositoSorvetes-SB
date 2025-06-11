@@ -32,22 +32,19 @@ public class LoginCadController {
     @PostMapping("/salvarUsuario")
     public String salvarUsuario(@Valid @ModelAttribute("usuario") Usuario usuario, BindingResult result, Model model) {
 
-        // Verifica se há erros de validação
         if (result.hasErrors()) {
-            model.addAttribute("usuario", usuario); // Garante que o objeto seja passado de volta
+            model.addAttribute("usuario", usuario);
             return "cadastroUsuario";
         }
 
-        // Verifica se o username já existe
         if (usuarioRepository.findByUsername(usuario.getUsername()).isPresent()) {
             model.addAttribute("erro", "Nome de usuário já cadastrado.");
-            model.addAttribute("usuario", usuario); // Garante que o objeto seja passado de volta
+            model.addAttribute("usuario", usuario);
             return "cadastroUsuario";
         }
 
-        // Criptografa a senha e salva o usuário
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        usuario.setAtivo(true); // Garante que o usuário está ativo
+        usuario.setAtivo(true);
         usuarioRepository.save(usuario);
 
         return "redirect:/login?cadastro=sucesso";

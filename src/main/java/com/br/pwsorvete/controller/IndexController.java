@@ -9,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.validation.BindingResult;
@@ -27,7 +26,6 @@ public class IndexController {
     @Autowired
     private SorveteRepository sorveteRepository;
 
-    // Página inicial com lista de sorvetes
     @GetMapping({"/", "/index"})
     public String sorvete(Model model, HttpSession session) {
         List<Sorvete> sorvetes = sorveteRepository.findByIsDeletedIsNull();
@@ -41,7 +39,6 @@ public class IndexController {
         return "index";
     }
 
-    // Adiciona um sorvete ao carrinho
     @GetMapping("/adicionarCarrinho")
     public String adicionarCarrinho(@RequestParam("id") Long id, HttpSession session, RedirectAttributes redirectAttributes) {
         List<Sorvete> carrinho = (List<Sorvete>) session.getAttribute("carrinho");
@@ -49,7 +46,6 @@ public class IndexController {
             carrinho = new ArrayList<>();
         }
 
-        // Busca o sorvete no banco e adiciona ao carrinho
         List<Sorvete> finalCarrinho = carrinho;
         sorveteRepository.findById(id).ifPresent(sorvete -> {
             finalCarrinho.add(sorvete);
@@ -60,12 +56,10 @@ public class IndexController {
         return "redirect:/index";
     }
 
-    // QUESTÃO 10: Ver carrinho
     @GetMapping("/verCarrinho")
     public String verCarrinho(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
         List<Sorvete> carrinho = (List<Sorvete>) session.getAttribute("carrinho");
 
-        // Se carrinho estiver vazio, redireciona para index
         if (carrinho == null || carrinho.isEmpty()) {
             redirectAttributes.addFlashAttribute("mensagem", "Não existem itens no carrinho");
             return "redirect:/index";
@@ -74,7 +68,6 @@ public class IndexController {
         model.addAttribute("carrinho", carrinho);
         model.addAttribute("totalItens", carrinho.size());
 
-        // Calcula total (opcional)
         double total = carrinho.stream()
                 .mapToDouble(Sorvete::getPreco)
                 .sum();
@@ -83,10 +76,8 @@ public class IndexController {
         return "verCarrinho";
     }
 
-    // QUESTÃO 11: Finalizar compra
     @GetMapping("/finalizarCompra")
     public String finalizarCompra(HttpSession session, RedirectAttributes redirectAttributes) {
-        // Invalida a sessão existente
         session.invalidate();
 
         redirectAttributes.addFlashAttribute("mensagem", "Compra finalizada com sucesso!");
@@ -95,7 +86,7 @@ public class IndexController {
 
     @GetMapping("/admin")
     public String admin(Model model) {
-        List<Sorvete> todosSorvetes = sorveteRepository.findAll(); // inclusive deletados
+        List<Sorvete> todosSorvetes = sorveteRepository.findAll();
         model.addAttribute("sorvetes", todosSorvetes);
         return "admin";
     }
@@ -143,7 +134,7 @@ public class IndexController {
                 .orElseThrow(() -> new RuntimeException("Sorvete não encontrado"));
 
         model.addAttribute("sorvete", sorvete);
-        model.addAttribute("edicao", true); // Flag para indicar que é edição
+        model.addAttribute("edicao", true);
         return "editar"; // Retorna a página de edição
     }
 

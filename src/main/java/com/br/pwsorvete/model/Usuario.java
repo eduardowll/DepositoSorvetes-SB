@@ -57,7 +57,7 @@ public class Usuario implements UserDetails {
     public boolean isAtivo() { return ativo; }
     public void setAtivo(boolean ativo) { this.ativo = ativo; }
 
-    // Spring Security methods
+    //Spring Security
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (this.isAdmin) {
@@ -84,6 +84,6 @@ public class Usuario implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return this.ativo; // Corrigido: agora verifica o campo ativo
+        return this.ativo;
     }
 }
