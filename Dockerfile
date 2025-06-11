@@ -1,5 +1,5 @@
 # Stage 1: Build the application
-FROM openjdk:24-jdk AS build
+FROM maven:latest-openjdk-24 AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
