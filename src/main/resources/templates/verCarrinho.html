@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head"></head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<main class="container mt-5">
+    <h2 class="mb-4 text-center">Meu Carrinho</h2>
+
+    <!-- Exibe mensagens de sucesso ou erro -->
+    <div th:if="${mensagem}" class="alert alert-info alert-dismissible fade show" role="alert">
+        <span th:text="${mensagem}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Itens no Carrinho (<span th:text="${totalItens}">0</span> itens)</h5>
+                </div>
+                <div class="card-body">
+                    <div th:each="sorvete : ${carrinho}" class="row mb-3 border-bottom pb-3">
+                        <div class="col-md-3">
+                            <img th:src="@{${sorvete.imageUrl}}" class="img-fluid rounded" alt="Sorvete">
+                        </div>
+                        <div class="col-md-6">
+                            <h6 th:text="${sorvete.nome}">Nome do Sorvete</h6>
+                            <p class="text-muted mb-1">
+                                <strong>Sabor:</strong> <span th:text="${sorvete.sabor}">Sabor</span>
+                            </p>
+                            <p class="text-muted mb-1">
+                                <strong>Marca:</strong> <span th:text="${sorvete.marca}">Marca</span>
+                            </p>
+                            <p class="text-muted mb-1">
+                                <strong>Quantidade:</strong> <span th:text="${sorvete.quantidade}">Quantidade</span>
+                            </p>
+                        </div>
+                        <div class="col-md-3 text-end">
+                            <h6 class="text-primary">R$ <span th:text="${#numbers.formatDecimal(sorvete.preco, 1, 2)}">0.00</span></h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Resumo do Pedido</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Total de itens:</span>
+                        <span th:text="${totalItens}">0</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <strong>Total:</strong>
+                        <strong class="text-primary">R$ <span th:text="${#numbers.formatDecimal(total, 1, 2)}">0.00</span></strong>
+                    </div>
+                    <hr>
+                    <div class="d-grid gap-2">
+                        <a href="/finalizarCompra" class="btn btn-success btn-lg">
+                            <i class="fa fa-check"></i> Finalizar Compra
+                        </a>
+                        <a href="/index" class="btn btn-outline-secondary">
+                            <i class="fa fa-arrow-left"></i> Continuar Comprando
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

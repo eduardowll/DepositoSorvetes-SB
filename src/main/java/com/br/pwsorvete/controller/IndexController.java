@@ -29,24 +29,67 @@ public class IndexController {
 
     // Página inicial com lista de sorvetes
     @GetMapping({"/", "/index"})
-    public String sorvete(Model model) {
+    public String sorvete(Model model, HttpSession session) {
         List<Sorvete> sorvetes = sorveteRepository.findByIsDeletedIsNull();
         model.addAttribute("telaPrincipal", true);
         model.addAttribute("sorvetes", sorvetes);
+
+        List<Sorvete> carrinho = (List<Sorvete>) session.getAttribute("carrinho");
+        int quantidadeCarrinho = carrinho != null ? carrinho.size() : 0;
+        model.addAttribute("quantidadeCarrinho", quantidadeCarrinho);
+
         return "index";
     }
 
     // Adiciona um sorvete ao carrinho
     @GetMapping("/adicionarCarrinho")
-    public String adicionarCarrinho(@RequestParam("id") Long id, HttpSession session) {
+    public String adicionarCarrinho(@RequestParam("id") Long id, HttpSession session, RedirectAttributes redirectAttributes) {
         List<Sorvete> carrinho = (List<Sorvete>) session.getAttribute("carrinho");
         if (carrinho == null) {
             carrinho = new ArrayList<>();
         }
 
-        sorveteRepository.findById(id).ifPresent(carrinho::add);
-        session.setAttribute("carrinho", carrinho);
+        // Busca o sorvete no banco e adiciona ao carrinho
+        List<Sorvete> finalCarrinho = carrinho;
+        sorveteRepository.findById(id).ifPresent(sorvete -> {
+            finalCarrinho.add(sorvete);
+            redirectAttributes.addFlashAttribute("mensagem", "Sorvete adicionado ao carrinho!");
+        });
 
+        session.setAttribute("carrinho", carrinho);
+        return "redirect:/index";
+    }
+
+    // QUESTÃO 10: Ver carrinho
+    @GetMapping("/verCarrinho")
+    public String verCarrinho(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+        List<Sorvete> carrinho = (List<Sorvete>) session.getAttribute("carrinho");
+
+        // Se carrinho estiver vazio, redireciona para index
+        if (carrinho == null || carrinho.isEmpty()) {
+            redirectAttributes.addFlashAttribute("mensagem", "Não existem itens no carrinho");
+            return "redirect:/index";
+        }
+
+        model.addAttribute("carrinho", carrinho);
+        model.addAttribute("totalItens", carrinho.size());
+
+        // Calcula total (opcional)
+        double total = carrinho.stream()
+                .mapToDouble(Sorvete::getPreco)
+                .sum();
+        model.addAttribute("total", total);
+
+        return "verCarrinho";
+    }
+
+    // QUESTÃO 11: Finalizar compra
+    @GetMapping("/finalizarCompra")
+    public String finalizarCompra(HttpSession session, RedirectAttributes redirectAttributes) {
+        // Invalida a sessão existente
+        session.invalidate();
+
+        redirectAttributes.addFlashAttribute("mensagem", "Compra finalizada com sucesso!");
         return "redirect:/index";
     }
 
